@@ -7,9 +7,17 @@ import org.apache.parquet.avro.AvroParquetWriter
 import org.apache.parquet.hadoop.{ParquetFileWriter, ParquetWriter}
 import org.apache.parquet.hadoop.metadata.CompressionCodecName
 
-abstract class sinkFunction[IN] extends SinkFunction[IN] with Serializable {
+abstract class sinkFunction[IN](writePath:String) extends SinkFunction[IN] with Serializable {
+  // parquet文件的约束
+  val schema1 = "{\"namespace\":\"flinkRun\"," +
+    "             \"type\": \"record\"," +
+    "             \"name\": \"parquet_test\"," +
+    "             \"fields\": [{\"name\": \"name\", \"type\": [\"string\",\"null\"]}," +
+    "                          {\"name\": \"id\",\"type\": [\"int\",\"null\"]}" +
+    "             ]}  "
 
     override def invoke(value: IN): Unit = {
+      // 写入parquet文件
         parquetWrite(value)
     }
 
@@ -17,18 +25,13 @@ abstract class sinkFunction[IN] extends SinkFunction[IN] with Serializable {
 
 
     def parquetWrite(value:IN):Unit = {
-      val schema1 = "{\"namespace\":\"flinkRun\"," +
-        "             \"type\": \"record\"," +
-        "             \"name\": \"parquet_test\"," +
-        "             \"fields\": [{\"name\": \"name\", \"type\": [\"string\",\"null\"]}," +
-        "                          {\"name\": \"id\",\"type\": [\"int\",\"null\"]}" +
-        "             ]}  "
+
       val schema: Schema = new Schema.Parser().parse(schema1)
       val ccn = CompressionCodecName.SNAPPY
       val config = ParquetWriterConfig()
       val time = System.currentTimeMillis()
-      val path = "hdfs://192.168.2.51:8020/apps/hive/warehouse/test/"+time+".parquet"
-      val writer: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](new Path(path))
+      val realPath = writePath+time+".parquet"
+      val writer: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](new Path(realPath))
         .withSchema(schema)
         .withCompressionCodec(ccn)
         .withPageSize(config.pageSize)
@@ -38,10 +41,10 @@ abstract class sinkFunction[IN] extends SinkFunction[IN] with Serializable {
         .withValidation(config.validating)
         .build()
       val gr: GenericRecord = new GenericData.Record(schema)
-      writeGR(gr,value)
+      putParquetValue(gr,value)
       writer.write(gr)
       writer.close()
       println(time)
     }
-    def writeGR(gr: GenericRecord,value:IN):Unit
+    def putParquetValue(gr: GenericRecord,value:IN):Unit
 }
