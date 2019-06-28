@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Table.ROW 表
+ * Table.ZC_CALLING_DETIAL_UNICOM_BDR 表
  */
-public class ROW {
+public class ZC_CALLING_DETIAL_UNICOM_BDR {
     public String record_type;
     public int roam_city_code;
     public int in_net_city_code;
@@ -57,9 +57,9 @@ public class ROW {
     public String speed_instr_flag;
     public String heat_pay_flag;
     public String imei;
-    public ROW(){}
+    public ZC_CALLING_DETIAL_UNICOM_BDR(){}
 
-    public ROW(String record_type, int roam_city_code, int in_net_city_code, int out_net_city_code, String inter_network_flag, String line_consult, int long_distance_flag, String imsi, String calling, String change_flag, String number_type, String select_num_plan, String called, String service_type, int service_code, String double_service_type, String double_service_code, String req_channel, String use_channel, String service_hyaline, String activity_code1, String add_service_code1, String activity_code2, String add_service_code2, String activity_code3, String add_service_code3, String activity_code4, String add_service_code4, String activity_code5, String add_service_code5, String msc, String lac, String cellular_flag, String mobile_type_code, String talk_date, String talk_start_time, int pay_unit, int data_consult, String long_distance_pay_code, String other_pay_code, int roam_pay, int long_distance_pay, int other_pay, String pgy_project, String sys_type_flag, String speed_instr_flag, String heat_pay_flag, String imei) {
+    public ZC_CALLING_DETIAL_UNICOM_BDR(String record_type, int roam_city_code, int in_net_city_code, int out_net_city_code, String inter_network_flag, String line_consult, int long_distance_flag, String imsi, String calling, String change_flag, String number_type, String select_num_plan, String called, String service_type, int service_code, String double_service_type, String double_service_code, String req_channel, String use_channel, String service_hyaline, String activity_code1, String add_service_code1, String activity_code2, String add_service_code2, String activity_code3, String add_service_code3, String activity_code4, String add_service_code4, String activity_code5, String add_service_code5, String msc, String lac, String cellular_flag, String mobile_type_code, String talk_date, String talk_start_time, int pay_unit, int data_consult, String long_distance_pay_code, String other_pay_code, int roam_pay, int long_distance_pay, int other_pay, String pgy_project, String sys_type_flag, String speed_instr_flag, String heat_pay_flag, String imei) {
         this.record_type = record_type;
         this.roam_city_code = roam_city_code;
         this.in_net_city_code = in_net_city_code;
@@ -114,7 +114,7 @@ public class ROW {
 
     @Override
     public String toString() {
-        return "ROW{" +
+        return "ZC_CALLING_DETIAL_UNICOM_BDR{" +
                 "record_type='" + record_type + '\'' +
                 ", roam_city_code=" + roam_city_code +
                 ", in_net_city_code=" + in_net_city_code +

@@ -19,6 +19,7 @@ abstract class sinkFunction[IN](writePath:String) extends SinkFunction[IN] with 
     override def invoke(value: IN): Unit = {
       // 写入parquet文件
         parquetWrite(value)
+      println(value.toString)
     }
 
 
@@ -30,7 +31,7 @@ abstract class sinkFunction[IN](writePath:String) extends SinkFunction[IN] with 
       val ccn = CompressionCodecName.SNAPPY
       val config = ParquetWriterConfig()
       val time = System.currentTimeMillis()
-      val realPath = writePath+time+".parquet"
+      val realPath = writePath+"/"+time+".parquet"
       val writer: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](new Path(realPath))
         .withSchema(schema)
         .withCompressionCodec(ccn)

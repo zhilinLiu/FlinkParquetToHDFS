@@ -1,16 +1,19 @@
 import java.util
 
-import Table.{ROW, WordCount}
+import Table.ZC_CALLING_DETIAL_UNICOM_BDR
+import org.apache.avro.generic.GenericRecord
 import org.apache.flink.api.common.functions.MapFunction
 import org.apache.flink.api.common.io.FilePathFilter
 import org.apache.flink.api.common.typeinfo.BasicTypeInfo
 import org.apache.flink.api.java.io.TextInputFormat
+import org.apache.flink.core.fs.FileSystem.WriteMode
 import org.apache.flink.core.fs.Path
 import org.apache.flink.runtime.state.filesystem.FsStateBackend
 import org.apache.flink.streaming.api.CheckpointingMode
 import org.apache.flink.streaming.api.environment.{CheckpointConfig, StreamExecutionEnvironment}
 import org.apache.flink.streaming.api.functions.source.FileProcessingMode
 import org.apache.flink.streaming.api.windowing.time.Time
+import org.apache.flink.table.descriptors.FileSystem
 object LinkedStart {
 
   def main(args: Array[String]): Unit = {
@@ -20,6 +23,7 @@ object LinkedStart {
       * val readPath = "hdfs://192.168.2.51:8020/user/flink/source"
       * val checkPointPath = "hdfs://192.168.2.51:8020/user/flink/checkpoint"
       * val writePath = "hdfs://192.168.2.51:8020/apps/hive/warehouse/test/"
+      *
       */
     val readPath = "d://wcresult"
     val checkPointPath = "file:///d://checkpoint"
@@ -37,7 +41,7 @@ object LinkedStart {
     //  准确一次语义
     evn.getCheckpointConfig.setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE)
     //  设置检查点之间的间隔
-    evn.getCheckpointConfig.setMinPauseBetweenCheckpoints(500)
+    evn.getCheckpointConfig.setMinPauseBetweenCheckpoints(5000)
     evn.getCheckpointConfig.setCheckpointTimeout(60000)
     //  最多有一个检查点
     evn.getCheckpointConfig.setMaxConcurrentCheckpoints(1)
@@ -48,10 +52,10 @@ object LinkedStart {
       * 开始操作
       */
     val stream = evn.readFile(format,readPath,FileProcessingMode.PROCESS_CONTINUOUSLY,5)
-    val result = stream.map(new MapFunction[String,ROW] {
-          override def map(value: String): ROW = {
+    val result = stream.map(new MapFunction[String,ZC_CALLING_DETIAL_UNICOM_BDR] {
+          override def map(value: String): ZC_CALLING_DETIAL_UNICOM_BDR = {
             val s=value.split(",")
-            new ROW(
+            new ZC_CALLING_DETIAL_UNICOM_BDR(
               s(0),
               s(1).toInt,
               s(2).toInt,
@@ -102,9 +106,15 @@ object LinkedStart {
               s(47))
           }
         }).keyBy("calling")
-        .timeWindow(Time.milliseconds(1000))
+        .timeWindow(Time.milliseconds(5000),Time.milliseconds(5000))
         .sum("pay_unit")
-    result.print()
+
+    result.addSink(new sinkFunction[ZC_CALLING_DETIAL_UNICOM_BDR](writePath) {
+      override def putParquetValue(gr: GenericRecord, value: ZC_CALLING_DETIAL_UNICOM_BDR): Unit = {
+        gr.put("name",value.calling)
+        gr.put("id",value.data_consult)
+      }
+    })
 
 
     /**
