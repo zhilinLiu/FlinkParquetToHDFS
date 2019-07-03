@@ -109,7 +109,7 @@ object LinkedStart {
         .timeWindow(Time.milliseconds(5000),Time.milliseconds(5000))
         .sum("pay_unit")
 
-    result.addSink(new sinkFunction[ZC_CALLING_DETIAL_UNICOM_BDR](writePath) {
+    result.addSink(new sinkFunction[ZC_CALLING_DETIAL_UNICOM_BDR](writePath,uri = "hdfs:8080") {
       override def putParquetValue(gr: GenericRecord, value: ZC_CALLING_DETIAL_UNICOM_BDR): Unit = {
         gr.put("name",value.calling)
         gr.put("id",value.data_consult)

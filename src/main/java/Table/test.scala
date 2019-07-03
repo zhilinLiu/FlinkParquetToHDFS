@@ -40,7 +40,9 @@ object test {
     val schema: Schema = new Schema.Parser().parse(schema1)
     val ccn = CompressionCodecName.SNAPPY
     val config = ParquetWriterConfig()
-    val writer: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](new Path("d://all.parquet"))
+    for(i<-1 to 10){
+
+    val writer: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](new Path("d://b.parquet"))
     .withSchema(schema)
     .withCompressionCodec(ccn)
     .withPageSize(config.pageSize)
@@ -50,35 +52,40 @@ object test {
     .withValidation(config.validating)
     .build()
     val gr: GenericRecord = new GenericData.Record(schema)
-    val files = new File("d://b")
-    val filelist = files.listFiles()
-    filelist.filter(f=>f.length()<1024*1024*18).foreach{f =>
-      val reader = new AvroParquetReader[GenericRecord](new Path(f.getPath))
-      var record:GenericRecord = null
-      var flag = true
-      while (flag){
-        record = reader.read()
-        if(record==null){
-          flag = false
-        }else{
-          gr.put("name",record.get("name"))
-          gr.put("id",record.get("id"))
-          try{
-          writer.write(gr)
-
-          }catch {
-            case e:Exception =>{
-              println("报错啦")
-            }
-          }
-
-
-          println(record)
-        }
+      gr.put("name","hh")
+      gr.put("id",i)
+      writer.write(gr)
+      writer.close()
     }
-
-
-    }
-    writer.close()
+//    val files = new File("d://b")
+//    val filelist = files.listFiles()
+//    filelist.filter(f=>f.length()<1024*1024*18).foreach{f =>
+//      val reader = new AvroParquetReader[GenericRecord](new Path(f.getPath))
+//      var record:GenericRecord = null
+//      var flag = true
+//      while (flag){
+//        record = reader.read()
+//        if(record==null){
+//          flag = false
+//        }else{
+//          gr.put("name","hh")
+//          gr.put("id",record.get("id"))
+//          try{
+//          writer.write(gr)
+//
+//          }catch {
+//            case e:Exception =>{
+//              println("报错啦")
+//            }
+//          }
+//
+//
+//          println(record)
+//        }
+//    }
+//
+//
+//    }
+//    writer.close()
   }
 }

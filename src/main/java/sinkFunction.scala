@@ -7,7 +7,7 @@ import org.apache.parquet.avro.AvroParquetWriter
 import org.apache.parquet.hadoop.{ParquetFileWriter, ParquetWriter}
 import org.apache.parquet.hadoop.metadata.CompressionCodecName
 
-abstract class sinkFunction[IN](writePath:String) extends SinkFunction[IN] with Serializable {
+abstract class sinkFunction[IN](writePath:String,uri:String) extends SinkFunction[IN] with Serializable {
   // parquet文件的约束
   val schema1 = "{\"namespace\":\"flinkRun\"," +
     "             \"type\": \"record\"," +
@@ -31,7 +31,7 @@ abstract class sinkFunction[IN](writePath:String) extends SinkFunction[IN] with 
       val ccn = CompressionCodecName.SNAPPY
       val config = ParquetWriterConfig()
       val time = System.currentTimeMillis()
-      val realPath = writePath+"/"+time+".parquet"
+      val realPath = uri+writePath+"/"+time+".parquet"
       val writer: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](new Path(realPath))
         .withSchema(schema)
         .withCompressionCodec(ccn)
