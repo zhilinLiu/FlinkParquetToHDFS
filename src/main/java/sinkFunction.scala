@@ -9,6 +9,7 @@ import org.apache.parquet.hadoop.metadata.CompressionCodecName
 
 abstract class sinkFunction[IN](writePath:String,uri:String) extends SinkFunction[IN] with Serializable {
   // parquet文件的约束
+
   val schema1 = "{\"namespace\":\"flinkRun\"," +
     "             \"type\": \"record\"," +
     "             \"name\": \"parquet_test\"," +
@@ -48,4 +49,6 @@ abstract class sinkFunction[IN](writePath:String,uri:String) extends SinkFunctio
       println(time)
     }
     def putParquetValue(gr: GenericRecord,value:IN):Unit
+  class Contain(){
+  }
 }

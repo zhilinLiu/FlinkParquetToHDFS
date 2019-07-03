@@ -21,7 +21,7 @@ object AvroTest {
     val ccn = CompressionCodecName.SNAPPY
     // 配置类，包含了一些默认配置
     val config = ParquetWriterConfig()
-    val path = "d://re.parquet"
+    val path = "d://re1.parquet"
     // G构建writer
     val writer: ParquetWriter[GenericRecord] = AvroParquetWriter.builder[GenericRecord](new Path(path))
       .withSchema(schema)
@@ -34,12 +34,7 @@ object AvroTest {
       .build()
     //  定义约束和加数据
     val gr: GenericRecord = new GenericData.Record(schema)
-    gr.put("name","hh")
-    gr.put("id",1)
-    writer.write(gr)
-    gr.put("name","lzl")
-    gr.put("id",2)
-    writer.write(gr)
+
     writer.close()
   }
 }
