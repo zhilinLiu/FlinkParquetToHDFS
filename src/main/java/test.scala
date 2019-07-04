@@ -49,7 +49,7 @@ object test {
       */
     val stream = evn.readFile(format,readPath,FileProcessingMode.PROCESS_CONTINUOUSLY,1)
     val result = stream.map((_,1)).keyBy(0).timeWindow(Time.seconds(1)).sum(1)
-    result.addSink(new ParquetSink[(String, Int)]() {
+    result.addSink(new ParquetSink[(String, Int)]("file:///","d://wordcount",schema1,1000) {
       override def putValue(gr: GenericRecord, v: (String, Int)): Unit = {
         gr.put("name",v._1)
         gr.put("id",v._2)

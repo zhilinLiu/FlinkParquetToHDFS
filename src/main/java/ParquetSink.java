@@ -24,10 +24,10 @@ public abstract class ParquetSink<IN> extends RichSinkFunction<IN> implements Se
 
     /**
      *
-     * @param uri
-     * @param writePath
-     * @param schema
-     * @param num
+     * @param uri           路径前缀，如  hdfs://   file:///
+     * @param writePath     路径 如 /user
+     * @param schema       json格式的约束
+     * @param num   一个parquet文件行数
      */
     public ParquetSink(String uri, String writePath, String schema,int num) {
         this.schema = schema;
@@ -45,7 +45,6 @@ public abstract class ParquetSink<IN> extends RichSinkFunction<IN> implements Se
 
     @Override
     public void invoke(IN value) throws Exception {
-        System.out.println(Thread.currentThread().getName()+" "+contain.writer+" "+count);
         if(contain.writer!=null){
             if(count<=num){
                 GenericRecord gr = new GenericData.Record(contain.schema);
@@ -72,6 +71,7 @@ public abstract class ParquetSink<IN> extends RichSinkFunction<IN> implements Se
             contain.writer.write(gr);
             count++;
         }
+        System.out.println(Thread.currentThread().getName()+" "+contain.writer+" "+count);
     }
     public abstract void putValue(GenericRecord gr,IN v);
     class Contain implements Serializable {
